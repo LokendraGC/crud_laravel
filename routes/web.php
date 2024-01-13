@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Customer;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\UploadController;
@@ -27,14 +28,23 @@ Route::get('/customer', function () {
     print_r($customers->toArray());
 });
 
-Route::get('/customers/create', [CustomerController::class, 'create']);
-// Route::post('/customers/create',[CustomerController::class,'create']);
-Route::post('/customers/store', [CustomerController::class, 'store']);
+Route::group(["prefix" => "customers/"], function () {
 
-Route::get('/customers/view', [CustomerController::class, 'view']);
-Route::get('/customers/delete/{id}', [CustomerController::class, 'delete']);
-Route::get('customers/edit/{id}', [CustomerController::class, 'edit'])->name('customer.edit');
-Route::post('customers/update/{id}', [CustomerController::class, 'update'])->name('customer.update');
+    Route::get('create', [CustomerController::class, 'create']);
+    // Route::post('create',[CustomerController::class,'create']);
+    Route::post('store', [CustomerController::class, 'store']);
+
+    Route::get('view', [CustomerController::class, 'view']);
+    Route::get('delete/{id}', [CustomerController::class, 'delete']);
+    Route::get('edit/{id}', [CustomerController::class, 'edit'])->name('customer.edit');
+    Route::post('update/{id}', [CustomerController::class, 'update'])->name('customer.update');
+});
+
+
+Route::get('/{lang?}', function ($lang = null) {
+    App::setlocale($lang);
+    return view('welcome');
+});
 
 Route::get('get-session', function () {
     $session = session()->all();
